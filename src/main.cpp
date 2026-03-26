@@ -13,6 +13,13 @@ static SDL_Texture *texture;
 
 glm::vec3 bg_color = { 0.2f, 0.2f, 0.2f };
 
+const float triangle_size = 100.f;
+SDL_Vertex vertices[3] = {
+    { .position = { .x = ((float)WNDW_W / 2.0f), .y = ((float)WNDW_H / 2.f) - triangle_size }, .color = {.r = 1, .g = 0, .b = 0, .a = 1}},
+    { .position = { .x = ((float)WNDW_W / 2.0f) + triangle_size , .y = ((float)WNDW_H / 2.f) }, .color = { .r = 0, .g = 1, .b = 0, .a = 1 } },
+    { .position = { .x = ((float)WNDW_W / 2.0f) - triangle_size, .y = ((float)WNDW_H / 2.f) }, .color = { .r = 0, .g = 0, .b = 1, .a = 1 } },
+};
+
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("[ERROR] - Couldn't initialize SDL: %s", SDL_GetError());
@@ -34,16 +41,15 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 }
 
 SDL_AppResult SDL_AppIterate(void* appstate) {
-    // Verteces position for the triangle
-    glm::vec3 verteces[3] = {
-        {-0.5f, -0.5f, 0.0f},
-        {0.5f, -0.5f, 0.0f},
-        { 0.0f,  0.5f, 0.0f},
-    };
+    const float size = 100.0f;
 
-    SDL_SetRenderDrawColorFloat(renderer, bg_color.r, bg_color.g, bg_color.b, SDL_ALPHA_OPAQUE_FLOAT);
-
+    SDL_SetRenderDrawColorFloat(renderer, bg_color.r, bg_color.g, bg_color.b, SDL_ALPHA_OPAQUE_FLOAT);  // Set the background color
     SDL_RenderClear(renderer);      // Clear window
+
+    /* Draw a single triangle with a different color at each vertex. Center this one and make it grow and shrink. */
+    /* You always draw triangles with this, but you can string triangles together to form polygons. */
+    SDL_RenderGeometry(renderer, NULL, vertices, 3, NULL, 0);
+
     SDL_RenderPresent(renderer);    // Update screen
 
     return SDL_APP_CONTINUE;
